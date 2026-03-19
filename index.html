@@ -20,6 +20,20 @@
       --radius: 10px;
     }
 
+    body.light {
+      --bg: #f0f2f7;
+      --surface: #ffffff;
+      --surface2: #e8ecf4;
+      --border: #d0d7e6;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --success: #059669;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --text: #1e2636;
+      --muted: #64748b;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -282,6 +296,26 @@
 
     .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
 
+    /* ── Theme toggle ── */
+    .theme-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 100;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+
     /* ── Responsive ── */
     @media (max-width: 600px) {
       header h1 { font-size: 1.4rem; }
@@ -291,6 +325,9 @@
   </style>
 </head>
 <body>
+<button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+  <span id="theme-icon">☀️</span> <span id="theme-label">Light Mode</span>
+</button>
 <div id="app">
   <header>
     <h1>Security+ <span>SY0-701</span> Practice Exam</h1>
@@ -1202,6 +1239,25 @@ function newExam() {
   const td = document.getElementById('q-timer-display');
   if (td) td.style.display = 'none';
 }
+
+// ─────────────────────────────────────────────
+//  THEME
+// ─────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
+  document.getElementById('theme-label').textContent = isLight ? 'Dark Mode' : 'Light Mode';
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+
+// Apply saved theme on load
+(function() {
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('theme-icon').textContent = '🌙';
+    document.getElementById('theme-label').textContent = 'Dark Mode';
+  }
+})();
 </script>
 </body>
 </html>
