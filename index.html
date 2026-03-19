@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Security+ SY0-701 Practice Exam</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #4f8ef7;
+      --accent-hover: #6ba3ff;
+      --success: #34d399;
+      --danger: #f87171;
+      --warning: #fbbf24;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+    }
+
+    #app { max-width: 860px; margin: 0 auto; }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    header h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; }
+    header h1 span { color: var(--accent); }
+    header p { color: var(--muted); margin-top: 6px; font-size: 0.95rem; }
+
+    /* ── Start Screen ── */
+    #start-screen {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+    }
+    #start-screen h2 { font-size: 1.5rem; margin-bottom: 12px; }
+    #start-screen p { color: var(--muted); line-height: 1.6; max-width: 560px; margin: 0 auto 24px; }
+
+    .domain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 10px;
+      margin: 24px 0;
+      text-align: left;
+    }
+    .domain-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+    }
+    .domain-card strong { display: block; color: var(--accent); margin-bottom: 4px; font-size: 0.8rem; }
+
+    .config-row {
+      display: flex; align-items: center; justify-content: center;
+      gap: 20px; flex-wrap: wrap; margin: 20px 0;
+    }
+    .config-row label { color: var(--muted); font-size: 0.9rem; }
+    .config-row select {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 12px; border-radius: 6px;
+      font-size: 0.9rem; cursor: pointer;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px; border-radius: 8px; border: none;
+      font-size: 1rem; font-weight: 600; cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-outline {
+      background: transparent; color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .btn-outline:hover { background: rgba(79,142,247,0.1); }
+
+    /* ── Quiz Screen ── */
+    #quiz-screen { display: none; }
+
+    .quiz-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .quiz-progress { font-size: 0.9rem; color: var(--muted); }
+    .quiz-timer {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 14px; font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .quiz-timer.warning { color: var(--warning); border-color: var(--warning); }
+    .quiz-timer.danger  { color: var(--danger);  border-color: var(--danger);  }
+
+    .progress-bar {
+      height: 4px; background: var(--border);
+      border-radius: 4px; margin-bottom: 28px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--accent);
+      border-radius: 4px; transition: width 0.3s;
+    }
+
+    .domain-badge {
+      display: inline-block;
+      background: rgba(79,142,247,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(79,142,247,0.3);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .question-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+    .question-text {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+    .question-num {
+      color: var(--muted); font-size: 0.85rem; margin-bottom: 10px;
+    }
+
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px 16px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+    }
+    .option:hover:not(.disabled) { border-color: var(--accent); background: rgba(79,142,247,0.07); }
+    .option.selected { border-color: var(--accent); background: rgba(79,142,247,0.1); }
+    .option.correct  { border-color: var(--success); background: rgba(52,211,153,0.1); }
+    .option.wrong    { border-color: var(--danger);  background: rgba(248,113,113,0.1); }
+    .option.disabled { cursor: default; }
+
+    .option-letter {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .option.selected .option-letter { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .option.correct  .option-letter { background: var(--success); border-color: var(--success); color: #fff; }
+    .option.wrong    .option-letter { background: var(--danger);  border-color: var(--danger);  color: #fff; }
+
+    .option-text { font-size: 0.95rem; line-height: 1.5; padding-top: 4px; }
+
+    .quiz-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 16px;
+    }
+
+    /* ── Results Screen ── */
+    #results-screen { display: none; }
+
+    .score-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .score-ring {
+      width: 120px; height: 120px; border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 800;
+      border: 6px solid;
+    }
+    .score-ring.pass { border-color: var(--success); color: var(--success); }
+    .score-ring.fail { border-color: var(--danger);  color: var(--danger);  }
+    .score-ring span { font-size: 0.7rem; font-weight: 400; color: var(--muted); margin-top: -4px; }
+
+    .score-meta { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; margin-top: 16px; }
+    .score-stat { text-align: center; }
+    .score-stat .val { font-size: 1.4rem; font-weight: 700; }
+    .score-stat .lbl { font-size: 0.8rem; color: var(--muted); }
+    .score-stat.correct .val { color: var(--success); }
+    .score-stat.wrong   .val { color: var(--danger); }
+
+    .domain-breakdown {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 28px;
+    }
+    .domain-breakdown h3 { font-size: 1rem; margin-bottom: 16px; }
+    .domain-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 12px; font-size: 0.88rem;
+    }
+    .domain-row .d-name { width: 260px; color: var(--muted); flex-shrink: 0; }
+    .domain-row .d-bar-wrap {
+      flex: 1; height: 8px; background: var(--border);
+      border-radius: 4px; overflow: hidden;
+    }
+    .domain-row .d-bar { height: 100%; border-radius: 4px; transition: width 0.6s; }
+    .domain-row .d-pct { width: 40px; text-align: right; font-weight: 600; }
+
+    /* ── Review Section ── */
+    .review-section { margin-top: 12px; }
+    .review-section h3 { font-size: 1.1rem; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+
+    .review-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .review-card-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px; cursor: pointer;
+      user-select: none;
+    }
+    .review-card-header:hover { background: var(--surface2); }
+    .status-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .status-dot.correct { background: var(--success); }
+    .status-dot.wrong   { background: var(--danger); }
+    .review-q-text { flex: 1; font-size: 0.9rem; line-height: 1.4; }
+    .review-chevron { color: var(--muted); transition: transform 0.2s; }
+    .review-card.open .review-chevron { transform: rotate(180deg); }
+
+    .review-body { display: none; padding: 0 20px 20px; }
+    .review-card.open .review-body { display: block; }
+
+    .review-options { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+    .review-option {
+      padding: 10px 14px; border-radius: 6px; font-size: 0.88rem;
+      border: 1px solid var(--border); background: var(--surface2);
+    }
+    .review-option.correct { border-color: var(--success); background: rgba(52,211,153,0.1); color: var(--success); }
+    .review-option.wrong   { border-color: var(--danger);  background: rgba(248,113,113,0.1); color: var(--danger); }
+
+    .explanation-box {
+      background: rgba(79,142,247,0.07);
+      border: 1px solid rgba(79,142,247,0.25);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #c9d5ed;
+    }
+    .explanation-box strong { color: var(--accent); display: block; margin-bottom: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.4rem; }
+      .question-card { padding: 20px 18px; }
+      .domain-row .d-name { width: 160px; font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Security+ <span>SY0-701</span> Practice Exam</h1>
+    <p>CompTIA Security+ Certification Prep — All 5 Exam Domains</p>
+  </header>
+
+  <!-- START SCREEN -->
+  <div id="start-screen">
+    <h2>Ready to Test Your Knowledge?</h2>
+    <p>Practice questions covering all Security+ SY0-701 domains. After the exam, every answer includes a detailed explanation to reinforce the concepts.</p>
+
+    <div class="domain-grid">
+      <div class="domain-card"><strong>Domain 1 — 12%</strong>General Security Concepts</div>
+      <div class="domain-card"><strong>Domain 2 — 22%</strong>Threats, Vulnerabilities &amp; Mitigations</div>
+      <div class="domain-card"><strong>Domain 3 — 18%</strong>Security Architecture</div>
+      <div class="domain-card"><strong>Domain 4 — 28%</strong>Security Operations</div>
+      <div class="domain-card"><strong>Domain 5 — 20%</strong>Security Program Management &amp; Oversight</div>
+    </div>
+
+    <div class="config-row">
+      <div>
+        <label for="q-count">Questions: </label>
+        <select id="q-count">
+          <option value="10">10 — Quick drill</option>
+          <option value="25">25 — Mini exam</option>
+          <option value="50" selected>50 — Half exam</option>
+          <option value="90">90 — Full exam</option>
+        </select>
+      </div>
+      <div>
+        <label for="q-timer">Timer: </label>
+        <select id="q-timer">
+          <option value="0">No timer</option>
+          <option value="60" selected>60 min</option>
+          <option value="90">90 min</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="startExam()">Start Exam</button>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <div class="quiz-meta">
+      <div class="quiz-progress" id="q-progress"></div>
+      <div class="quiz-timer" id="q-timer-display" style="display:none"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div id="question-area"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-outline" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="btn btn-primary" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results-screen">
+    <div class="score-card">
+      <div class="score-ring" id="score-ring"></div>
+      <h2 id="pass-fail-msg" style="margin-bottom:8px;"></h2>
+      <p style="color:var(--muted);font-size:0.9rem;">Passing score: 750 / 900 (~83%)</p>
+      <div class="score-meta">
+        <div class="score-stat correct"><div class="val" id="s-correct"></div><div class="lbl">Correct</div></div>
+        <div class="score-stat wrong"><div class="val" id="s-wrong"></div><div class="lbl">Incorrect</div></div>
+        <div class="score-stat"><div class="val" id="s-time"></div><div class="lbl">Time Used</div></div>
+      </div>
+    </div>
+
+    <div class="domain-breakdown">
+      <h3>Performance by Domain</h3>
+      <div id="domain-bars"></div>
+    </div>
+
+    <div class="review-section">
+      <h3>Question Review &amp; Explanations</h3>
+      <div id="review-list"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-outline" onclick="retakeExam()">Retake This Exam</button>
+      <button class="btn btn-primary" onclick="newExam()">New Exam</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  QUESTION BANK  (90 questions, all 5 domains)
+// ─────────────────────────────────────────────
+const BANK = [
+  // ── DOMAIN 1: General Security Concepts ──
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which of the following BEST describes the principle of least privilege?",
+    opts: ["Users should have only the minimum access required to perform their job functions","All users should share a single account to minimize administrative overhead","Administrators should have full access to all systems at all times","Users should rotate their passwords every 30 days"],
+    answer: 0,
+    explanation: "Least privilege means granting users and processes only the minimum permissions needed to perform their tasks. This limits the blast radius of compromised accounts or insider threats and is a foundational security control."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "A security analyst wants to ensure that data cannot be read by unauthorized parties while it is being transmitted over the network. Which security goal does this BEST represent?",
+    opts: ["Integrity","Availability","Confidentiality","Non-repudiation"],
+    answer: 2,
+    explanation: "Confidentiality ensures data is accessible only to authorized parties. Encrypting data in transit (e.g., TLS) addresses confidentiality. Integrity ensures data isn't altered; availability ensures systems are accessible; non-repudiation prevents denial of an action."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which cryptographic concept ensures that a sender cannot deny sending a message?",
+    opts: ["Confidentiality","Integrity","Non-repudiation","Authentication"],
+    answer: 2,
+    explanation: "Non-repudiation, typically achieved through digital signatures, provides proof of origin and prevents a sender from denying they sent a message. It combines authentication with integrity to create legally binding evidence."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which of the following is an example of a technical control?",
+    opts: ["Security awareness training","Acceptable use policy","Firewall rules","Background checks"],
+    answer: 2,
+    explanation: "Technical (logical) controls use technology to enforce security, such as firewalls, encryption, and access control lists. Awareness training and policies are administrative controls; background checks are operational controls."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "A company uses digital certificates to authenticate users. Which PKI component is responsible for issuing these certificates?",
+    opts: ["Registration Authority (RA)","Certificate Revocation List (CRL)","Certificate Authority (CA)","Online Certificate Status Protocol (OCSP)"],
+    answer: 2,
+    explanation: "The Certificate Authority (CA) is the trusted entity that issues and signs digital certificates. The RA handles enrollment requests, the CRL lists revoked certificates, and OCSP provides real-time certificate status."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which authentication factor is represented by a smart card?",
+    opts: ["Something you know","Something you have","Something you are","Somewhere you are"],
+    answer: 1,
+    explanation: "A smart card is a physical token representing 'something you have.' PINs or passwords are 'something you know,' biometrics are 'something you are,' and geolocation is 'somewhere you are.' Smart cards are most effective when combined with a PIN (two-factor authentication)."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which cipher type operates on fixed-length groups of bits?",
+    opts: ["Stream cipher","Block cipher","Asymmetric cipher","Hash function"],
+    answer: 1,
+    explanation: "Block ciphers (e.g., AES, 3DES) encrypt fixed-size blocks of data. Stream ciphers encrypt one bit or byte at a time. AES with a 128-bit block size is the current gold standard. Block ciphers use modes of operation (CBC, GCM) to handle data larger than one block."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "An organization needs to verify file integrity after a transfer. Which tool is MOST appropriate?",
+    opts: ["Symmetric encryption","Hashing algorithm","Digital certificate","Access control list"],
+    answer: 1,
+    explanation: "Hashing algorithms (MD5, SHA-256) produce a fixed-length digest of data. If even one bit changes, the hash changes completely. Comparing hashes before and after transfer confirms data integrity. SHA-256 is recommended; MD5 is considered weak."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which of the following BEST describes a Zero Trust security model?",
+    opts: ["All internal network traffic is implicitly trusted","No user or device is trusted by default, regardless of network location","Only external traffic requires authentication","Trust is established once and maintained for the session"],
+    answer: 1,
+    explanation: "Zero Trust operates on the principle of 'never trust, always verify.' Every user, device, and request must be continuously authenticated and authorized regardless of whether it originates inside or outside the network perimeter. It assumes breach is always possible."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which key is used to encrypt data in asymmetric cryptography?",
+    opts: ["Recipient's private key","Sender's private key","Recipient's public key","Sender's public key"],
+    answer: 2,
+    explanation: "In asymmetric encryption, data is encrypted with the recipient's public key and can only be decrypted with the recipient's private key. This ensures only the intended recipient can read the message without ever sharing a secret key."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which of the following BEST describes separation of duties?",
+    opts: ["A single administrator has root access to all systems","No single individual can complete a sensitive task alone","Users authenticate with multiple factors","Employees must rotate through different job roles"],
+    answer: 1,
+    explanation: "Separation of duties divides critical tasks among multiple people so that no single person can commit fraud or error without collusion. For example, the person who requests a payment should not also be the one who approves it."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "A security team wants to implement a control that prevents a specific user from both requesting and approving their own access changes. This is an example of:",
+    opts: ["Least privilege","Defense in depth","Separation of duties","Need to know"],
+    answer: 2,
+    explanation: "Separation of duties ensures that critical tasks requiring more than one person prevents single points of abuse. Requiring a different approver than the requester is a classic implementation. This differs from least privilege, which limits the scope of access."
+  },
+
+  // ── DOMAIN 2: Threats, Vulnerabilities & Mitigations ──
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "An attacker sends a fraudulent email pretending to be a bank to steal login credentials. This is BEST described as:",
+    opts: ["Vishing","Spear phishing","Phishing","Smishing"],
+    answer: 2,
+    explanation: "Phishing uses fraudulent emails impersonating legitimate organizations to trick users into revealing credentials or installing malware. Spear phishing targets specific individuals, vishing uses voice calls, and smishing uses SMS messages."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "A penetration tester discovers that a web application builds SQL queries using unsanitized user input. This vulnerability is known as:",
+    opts: ["Cross-site scripting (XSS)","Buffer overflow","SQL injection","Directory traversal"],
+    answer: 2,
+    explanation: "SQL injection occurs when untrusted input is incorporated into SQL queries without proper validation or parameterization. Attackers can manipulate queries to bypass authentication, dump databases, or execute system commands. Parameterized queries are the primary defense."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "Which type of malware disguises itself as legitimate software but contains malicious code?",
+    opts: ["Worm","Ransomware","Trojan","Rootkit"],
+    answer: 2,
+    explanation: "A Trojan horse masquerades as legitimate software to trick users into executing it. Unlike viruses, Trojans don't self-replicate. They may create backdoors, steal credentials, or download additional malware. User education and application whitelisting help prevent Trojan infections."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "An attacker floods a web server with more traffic than it can handle, making it unavailable to legitimate users. This is BEST described as:",
+    opts: ["Man-in-the-middle attack","Denial of Service (DoS) attack","Replay attack","Session hijacking"],
+    answer: 1,
+    explanation: "A DoS attack overwhelms a target with traffic or requests to exhaust resources and deny service to legitimate users. A DDoS uses multiple distributed sources. Mitigations include rate limiting, traffic scrubbing, CDNs, and upstream filtering."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "Which attack intercepts and potentially alters communication between two parties who believe they are communicating directly with each other?",
+    opts: ["Replay attack","Man-in-the-Middle (MitM) attack","Spoofing attack","Smurf attack"],
+    answer: 1,
+    explanation: "A Man-in-the-Middle attack positions the attacker between two communicating parties to eavesdrop or manipulate the traffic. TLS/SSL with certificate validation, mutual authentication, and HSTS help prevent MitM attacks."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "A vulnerability was publicly disclosed but no patch is available from the vendor. This is BEST described as:",
+    opts: ["Legacy vulnerability","Zero-day vulnerability","Known vulnerability","CVE disclosure"],
+    answer: 1,
+    explanation: "A zero-day vulnerability is one that is unknown to or unpatched by the vendor, giving defenders 'zero days' to patch before exploitation. Organizations must rely on compensating controls such as WAFs, IDS/IPS, and network segmentation until a patch is released."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "An attacker captures authentication tokens and replays them later to gain unauthorized access. This is BEST described as:",
+    opts: ["Session hijacking","Replay attack","Pass-the-hash","Credential stuffing"],
+    answer: 1,
+    explanation: "A replay attack captures valid authentication data (tokens, credentials) and retransmits them to authenticate fraudulently. Defenses include timestamps and nonces in authentication protocols (e.g., Kerberos uses time stamps), and encrypted tokens."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "Which social engineering technique involves an attacker physically following an authorized person through a secured door?",
+    opts: ["Shoulder surfing","Piggybacking/Tailgating","Dumpster diving","Impersonation"],
+    answer: 1,
+    explanation: "Tailgating (piggybacking) is when an unauthorized person gains physical access by following closely behind an authorized person through a secured entry point. Mitigations include mantraps, security guards, and employee training to challenge unfamiliar individuals."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "Which of the following BEST describes a watering hole attack?",
+    opts: ["Targeting users with spear phishing emails","Compromising websites that the target audience is known to visit","Flooding a target network with traffic","Inserting malware into software supply chains"],
+    answer: 1,
+    explanation: "A watering hole attack compromises websites frequented by the intended victims. When targets visit the site, their systems are infected. This is effective against organizations whose employees visit industry-specific sites. Mitigations include browser security, DNS filtering, and web proxies."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "A CVSS score is used to:",
+    opts: ["Track vulnerability remediation timelines","Quantify the severity of a security vulnerability","Identify the source of an attack","Classify malware families"],
+    answer: 1,
+    explanation: "The Common Vulnerability Scoring System (CVSS) provides a standardized score (0–10) reflecting a vulnerability's severity based on exploitability, impact, and environmental factors. It helps organizations prioritize patching efforts."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "An attacker modifies the ARP cache of a switch to associate their MAC address with a legitimate IP address. This is BEST described as:",
+    opts: ["DNS poisoning","IP spoofing","ARP poisoning","MAC flooding"],
+    answer: 2,
+    explanation: "ARP poisoning (ARP spoofing) manipulates ARP tables to link the attacker's MAC with a legitimate IP, redirecting network traffic through the attacker for MitM attacks. Defenses include Dynamic ARP Inspection (DAI) and static ARP entries."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "Which of the following BEST describes a supply chain attack?",
+    opts: ["Exploiting vulnerabilities in a vendor's software or hardware before it reaches the end user","Targeting the weakest link in an organization's password policy","Using stolen credentials to access cloud services","Performing phishing attacks against suppliers"],
+    answer: 0,
+    explanation: "Supply chain attacks compromise software, hardware, or services upstream of the target—often before delivery. The SolarWinds attack is a prime example. Mitigations include vendor vetting, software signing, integrity verification, and SBOM (Software Bill of Materials) reviews."
+  },
+
+  // ── DOMAIN 3: Security Architecture ──
+  {
+    domain: "3 – Security Architecture",
+    q: "Which network device operates at Layer 3 and makes forwarding decisions based on IP addresses?",
+    opts: ["Hub","Switch","Router","Bridge"],
+    answer: 2,
+    explanation: "Routers operate at Layer 3 (Network layer) and forward packets based on IP addresses. Switches operate at Layer 2 using MAC addresses. Routers enforce ACLs and connect different network segments, making them critical for network segmentation security."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "A DMZ is BEST described as:",
+    opts: ["An encrypted tunnel between two networks","A network segment that hosts publicly accessible services, isolated from the internal network","A VLAN used exclusively for management traffic","A subnet reserved for wireless devices"],
+    answer: 1,
+    explanation: "A DMZ (Demilitarized Zone) is a perimeter network segment that hosts public-facing services (web servers, mail servers) while isolating them from the internal trusted network. It uses firewalls on both sides to limit exposure if a DMZ host is compromised."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which cloud deployment model is exclusively used by a single organization and may be hosted on-premises or by a third party?",
+    opts: ["Public cloud","Hybrid cloud","Community cloud","Private cloud"],
+    answer: 3,
+    explanation: "A private cloud is dedicated to one organization, offering greater control and customization. Public clouds are shared among many tenants. Hybrid clouds combine both. Community clouds are shared by organizations with similar requirements (e.g., government agencies)."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which of the following is a PRIMARY security concern with Infrastructure as a Service (IaaS)?",
+    opts: ["The cloud provider controls the operating system","The customer is responsible for securing the operating system and applications","The customer has no visibility into the underlying hardware","Application code is managed by the provider"],
+    answer: 1,
+    explanation: "In IaaS, the customer controls the OS, applications, and data—meaning they're responsible for patching and hardening those layers. The cloud provider manages the physical infrastructure and hypervisor. This shared responsibility model is critical to understand for Security+."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "An organization wants to segment its network to limit the spread of malware. Which technique is MOST appropriate?",
+    opts: ["NAT","VLANs","Port mirroring","DNS sinkholing"],
+    answer: 1,
+    explanation: "VLANs (Virtual Local Area Networks) logically segment a network, limiting broadcast domains and containing threats. If one VLAN is compromised, traffic cannot directly reach other VLANs without passing through a router/firewall where ACLs can be applied."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which of the following BEST describes a proxy server?",
+    opts: ["A device that encrypts all network traffic","An intermediary that requests internet resources on behalf of clients","A system that scans email for malware","A firewall that operates at Layer 7"],
+    answer: 1,
+    explanation: "A proxy server sits between clients and the internet, forwarding requests on behalf of clients. This hides internal IP addresses, enables content filtering, caches content for performance, and allows inspection of traffic. A reverse proxy protects servers; a forward proxy protects clients."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which technology creates a secure, encrypted tunnel over a public network?",
+    opts: ["VLAN","VPN","Proxy","NAC"],
+    answer: 1,
+    explanation: "A VPN (Virtual Private Network) encrypts traffic between endpoints over an untrusted network (typically the internet), creating a secure tunnel. Common protocols include IPsec, SSL/TLS, and WireGuard. Site-to-site VPNs connect networks; remote access VPNs connect individual users."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which infrastructure resilience strategy involves distributing services across multiple geographic locations?",
+    opts: ["Load balancing","Geographic dispersal","Hot site","RAID"],
+    answer: 1,
+    explanation: "Geographic dispersal distributes infrastructure (data centers, servers) across different physical locations to prevent a single regional disaster from causing total outage. Combined with DNS failover and load balancing, it ensures high availability even during regional incidents."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "A company wants to ensure its web application can handle traffic spikes without downtime. Which technology BEST addresses this?",
+    opts: ["Intrusion Detection System","Load balancer","Data Loss Prevention","SIEM"],
+    answer: 1,
+    explanation: "A load balancer distributes incoming traffic across multiple servers, preventing any single server from being overwhelmed. It also provides failover—if one server fails, traffic is redirected to healthy servers. This directly addresses both availability and scalability."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which of the following is an example of defense in depth?",
+    opts: ["Using a single strong firewall at the network perimeter","Implementing antivirus only on servers","Layering multiple security controls (firewall, IDS, endpoint protection, encryption)","Requiring only multi-factor authentication"],
+    answer: 2,
+    explanation: "Defense in depth uses multiple overlapping security layers so that if one control fails, others remain. No single control is foolproof. Combining perimeter firewalls, network segmentation, endpoint protection, encryption, and monitoring exemplifies this strategy."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which cloud service model provides the MOST control to the customer over the computing environment?",
+    opts: ["SaaS","PaaS","IaaS","FaaS"],
+    answer: 2,
+    explanation: "IaaS (Infrastructure as a Service) provides virtualized computing resources where customers control the OS, middleware, and applications. PaaS adds a managed platform; SaaS delivers complete applications. More control also means more security responsibility for the customer."
+  },
+
+  // ── DOMAIN 4: Security Operations ──
+  {
+    domain: "4 – Security Operations",
+    q: "A security analyst receives an alert about unusual outbound traffic volumes at 3 AM. Which type of system MOST likely generated this alert?",
+    opts: ["Data Loss Prevention (DLP)","Security Information and Event Management (SIEM)","Vulnerability Scanner","Password Manager"],
+    answer: 1,
+    explanation: "A SIEM aggregates and correlates logs from across the environment, applying rules to detect anomalies and generate alerts. It provides centralized visibility and is essential for detecting threats that span multiple systems."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which tool performs passive scanning by listening to network traffic rather than actively probing hosts?",
+    opts: ["Nmap","Nessus","Wireshark","Metasploit"],
+    answer: 2,
+    explanation: "Wireshark is a passive packet capture and analysis tool that captures network traffic without generating probes. Nmap actively sends packets to discover hosts and services. Nessus actively probes systems for vulnerabilities. Passive analysis is less likely to trigger IDS alerts."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "An IDS generates an alert for traffic that is actually legitimate. This is BEST described as:",
+    opts: ["True positive","True negative","False positive","False negative"],
+    answer: 2,
+    explanation: "A false positive is when a security system incorrectly identifies benign activity as malicious. False positives cause alert fatigue. False negatives (missed real attacks) are more dangerous but harder to measure. Tuning detection rules reduces false positives."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which incident response phase involves identifying the scope of an attack and preventing further damage?",
+    opts: ["Preparation","Identification","Containment","Eradication"],
+    answer: 2,
+    explanation: "Containment stops the spread of an incident after it's been identified. This may involve isolating affected systems, blocking malicious IPs, or disabling compromised accounts. The NIST incident response lifecycle is: Preparation → Detection & Analysis → Containment → Eradication → Recovery → Post-Incident."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Digital forensics investigators should maintain which of the following to ensure evidence is admissible?",
+    opts: ["Chain of custody","Audit log","Retention policy","Encryption key"],
+    answer: 0,
+    explanation: "Chain of custody documents who handled evidence, when, and how, from collection through court presentation. Any break in the chain can render evidence inadmissible. Forensic images (bit-for-bit copies) are created and hashes are used to verify integrity."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which technique involves monitoring and recording attacker activity in a controlled environment to study attack methods?",
+    opts: ["Penetration testing","Honeypot","Vulnerability assessment","Red team exercise"],
+    answer: 1,
+    explanation: "A honeypot is a decoy system designed to lure attackers. It has no legitimate traffic, so any activity is suspicious. Honeypots gather threat intelligence, reveal attacker techniques, and divert attackers from real assets. A honeynet is a network of honeypots."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which endpoint security technology monitors and records endpoint activity to enable threat detection and response?",
+    opts: ["Antivirus","Firewall","EDR (Endpoint Detection and Response)","DLP"],
+    answer: 2,
+    explanation: "EDR continuously monitors endpoints, records process execution, file changes, and network connections to detect and respond to threats. Unlike traditional antivirus (signature-based), EDR uses behavioral analysis and can contain threats by isolating endpoints remotely."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "An administrator wants to ensure that all software on endpoints is current with security patches. Which process addresses this?",
+    opts: ["Change management","Patch management","Configuration management","Asset management"],
+    answer: 1,
+    explanation: "Patch management involves identifying, acquiring, testing, and deploying software patches to remediate vulnerabilities. A structured patch management program with defined timelines (e.g., critical patches within 24–72 hours) is essential to reducing the attack surface."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which of the following BEST describes the purpose of a Security Operations Center (SOC)?",
+    opts: ["Developing security policies and procedures","Continuously monitoring and responding to security threats","Conducting penetration tests","Managing user access requests"],
+    answer: 1,
+    explanation: "A SOC is a centralized team that monitors networks, systems, and applications 24/7 to detect, analyze, and respond to security incidents. SOC analysts use tools like SIEM, EDR, and threat intelligence platforms to protect the organization in real time."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "An organization wants to test its security by simulating a real-world attacker. Which assessment type is MOST appropriate?",
+    opts: ["Vulnerability assessment","Risk assessment","Penetration test","Compliance audit"],
+    answer: 2,
+    explanation: "Penetration testing simulates real-world attacks against systems with authorization to identify exploitable vulnerabilities. Vulnerability assessments identify weaknesses without exploiting them. Pen tests provide evidence of real-world exploitability and prioritize risk remediation."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which technique involves searching through enterprise data to detect indicators of compromise that automated tools may have missed?",
+    opts: ["Threat hunting","Log monitoring","Vulnerability scanning","Security auditing"],
+    answer: 0,
+    explanation: "Threat hunting is a proactive security practice where analysts manually search through data looking for threats that evaded automated detection. Hunters form hypotheses based on threat intelligence and look for anomalies, TTPs, and indicators of compromise."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which of the following is an example of data loss prevention (DLP)?",
+    opts: ["Encrypting all data at rest","Blocking the transfer of files containing credit card numbers via email","Backing up data to a secondary location","Scanning inbound email for phishing links"],
+    answer: 1,
+    explanation: "DLP solutions monitor data in use, in motion, and at rest to prevent unauthorized transmission of sensitive data. Blocking emails with credit card patterns is a classic DLP use case. DLP uses content inspection, contextual analysis, and policy enforcement."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which of the following BEST describes the concept of 'indicators of compromise' (IoC)?",
+    opts: ["Alerts generated by a firewall about blocked connections","Artifacts or evidence suggesting a system has been compromised","Policies that define acceptable use of systems","Metrics measuring security control effectiveness"],
+    answer: 1,
+    explanation: "IoCs are forensic artifacts such as unusual file hashes, suspicious IP addresses, registry changes, or abnormal process execution that indicate a system may have been compromised. IoCs are shared via threat intelligence feeds (STIX/TAXII) to help organizations detect known threats."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which wireless security protocol replaced WPA2 and offers improved cryptography, including 192-bit encryption for enterprise use?",
+    opts: ["WEP","WPA","WPA2","WPA3"],
+    answer: 3,
+    explanation: "WPA3, introduced in 2018, uses SAE (Simultaneous Authentication of Equals) replacing PSK, making dictionary attacks harder. It offers 192-bit encryption in Enterprise mode, forward secrecy, and protects against offline dictionary attacks. WEP and WPA are deprecated."
+  },
+
+  // ── DOMAIN 5: Security Program Management & Oversight ──
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which framework provides a set of best practices for IT service management?",
+    opts: ["NIST CSF","ITIL","ISO 27001","SOC 2"],
+    answer: 1,
+    explanation: "ITIL (Information Technology Infrastructure Library) is a framework for IT service management best practices. NIST CSF provides a cybersecurity framework; ISO 27001 is an ISMS standard; SOC 2 is an auditing standard for service organizations. For Security+, know the differences between these frameworks."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "A risk assessment determines that a particular risk is acceptable and the organization will take no further action. This is BEST described as:",
+    opts: ["Risk transference","Risk avoidance","Risk acceptance","Risk mitigation"],
+    answer: 2,
+    explanation: "Risk acceptance means acknowledging a risk exists but deciding not to act because the cost of mitigation exceeds the potential impact, or the risk is within the organization's tolerance. Risk transference (insurance), avoidance (stopping the activity), and mitigation (reducing impact) are alternatives."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which regulation governs the protection of personal health information in the United States?",
+    opts: ["PCI DSS","GDPR","HIPAA","SOX"],
+    answer: 2,
+    explanation: "HIPAA (Health Insurance Portability and Accountability Act) governs the privacy and security of protected health information (PHI) in the US. PCI DSS covers payment card data, GDPR covers EU personal data, and SOX covers financial reporting for public companies."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "A company purchases cyber insurance to offset financial losses from a data breach. This is an example of:",
+    opts: ["Risk avoidance","Risk mitigation","Risk transference","Risk acceptance"],
+    answer: 2,
+    explanation: "Risk transference shifts financial responsibility for a risk to a third party, most commonly through insurance. The risk itself isn't eliminated—the financial consequence is transferred. Cyber insurance typically covers breach notification, legal fees, and business interruption."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which document defines the scope, rules, and constraints of a penetration test?",
+    opts: ["Statement of Work (SOW)","Rules of Engagement (RoE)","Non-Disclosure Agreement (NDA)","Service Level Agreement (SLA)"],
+    answer: 1,
+    explanation: "Rules of Engagement define what is in scope, what techniques are permitted, timing, escalation procedures, and emergency contacts for a penetration test. They protect both the tester and the organization. The SOW defines deliverables and costs; the NDA protects confidential information."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which of the following BEST describes a Business Impact Analysis (BIA)?",
+    opts: ["Identifies all vulnerabilities in an organization's systems","Quantifies the effect of disruptive events on business functions and determines recovery priorities","Reviews employee compliance with security policies","Assesses third-party vendor security posture"],
+    answer: 1,
+    explanation: "A BIA identifies critical business functions, determines the impact of their disruption (financial, operational, reputational), and establishes RTO and RPO requirements. It is foundational to Business Continuity Planning (BCP) and Disaster Recovery Planning (DRP)."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "The maximum amount of time a system or service can be unavailable before causing unacceptable business impact is called:",
+    opts: ["Recovery Point Objective (RPO)","Recovery Time Objective (RTO)","Mean Time to Repair (MTTR)","Mean Time Between Failures (MTBF)"],
+    answer: 1,
+    explanation: "RTO (Recovery Time Objective) is the maximum acceptable downtime after a disruption. RPO is the maximum acceptable data loss (measured in time). MTTR is the average time to repair a system. MTBF measures average time between system failures. Both RTO and RPO drive BCP/DRP design."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which of the following BEST describes data classification?",
+    opts: ["Encrypting sensitive data before storage","Categorizing data based on sensitivity and applying appropriate controls","Backing up data to multiple locations","Assigning data ownership to specific employees"],
+    answer: 1,
+    explanation: "Data classification assigns sensitivity levels (e.g., Public, Internal, Confidential, Top Secret) to data, which then drives security controls for storage, transmission, and access. Classification enables targeted protection and helps comply with regulations."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which regulation requires organizations that process payment card data to follow specific security standards?",
+    opts: ["HIPAA","SOX","GDPR","PCI DSS"],
+    answer: 3,
+    explanation: "PCI DSS (Payment Card Industry Data Security Standard) applies to any organization that stores, processes, or transmits cardholder data. It mandates 12 requirements including network security, encryption, access control, and regular testing. Non-compliance can result in fines and loss of card processing privileges."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "A security policy that outlines acceptable use of organizational IT resources is BEST described as:",
+    opts: ["Data classification policy","Acceptable Use Policy (AUP)","Incident response plan","Change management policy"],
+    answer: 1,
+    explanation: "An Acceptable Use Policy (AUP) defines how employees may use organizational IT resources, what is prohibited, and consequences for violations. It is typically signed by employees as part of onboarding. It provides legal protection and sets behavioral expectations."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which of the following BEST describes the purpose of a security awareness training program?",
+    opts: ["Teach IT staff to configure security devices","Reduce human-related security risks by educating all employees","Test network defenses against real-world attacks","Audit compliance with security policies"],
+    answer: 1,
+    explanation: "Security awareness training reduces risks from social engineering, phishing, and human error by educating all employees about threats, safe behaviors, and security policies. Since humans are often the weakest link, training is one of the highest-ROI security investments."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "When evaluating third-party vendors for risk, an organization should PRIMARILY review:",
+    opts: ["The vendor's marketing materials","Vendor questionnaires, audit reports (SOC 2), and contractual security obligations","The vendor's employee count and financial performance","Whether the vendor uses open-source software"],
+    answer: 1,
+    explanation: "Third-party risk management requires assessing vendors' security posture through questionnaires (CSA CAIQ), independent audit reports (SOC 2 Type II), penetration test results, and contractual obligations (SLAs, right-to-audit clauses). Supply chain attacks make vendor due diligence critical."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which of the following BEST describes the difference between a policy and a procedure?",
+    opts: ["A policy is technical; a procedure is managerial","A policy states what must be done; a procedure describes how to do it","Procedures are mandatory; policies are optional","Policies are written by IT staff; procedures by executives"],
+    answer: 1,
+    explanation: "Policies are high-level documents stating organizational intent and requirements (the 'what'). Procedures are step-by-step instructions implementing policy (the 'how'). Standards specify mandatory requirements; guidelines provide recommendations. Understanding this hierarchy is fundamental to security governance."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "A penetration test finds that a web application stores passwords in plaintext. The MOST appropriate immediate remediation is to:",
+    opts: ["Implement multi-factor authentication","Hash passwords using a strong algorithm such as bcrypt","Encrypt the entire database","Require longer passwords"],
+    answer: 1,
+    explanation: "Passwords should never be stored in plaintext. The best practice is to hash passwords with a strong, slow algorithm like bcrypt, scrypt, or Argon2 with a unique salt per user. This ensures that even if the database is compromised, attackers cannot easily recover plaintext passwords."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which concept measures the potential loss value of an asset if a specific threat is realized?",
+    opts: ["Asset Value (AV)","Exposure Factor (EF)","Single Loss Expectancy (SLE)","Annual Rate of Occurrence (ARO)"],
+    answer: 2,
+    explanation: "SLE = Asset Value (AV) × Exposure Factor (EF). It represents the expected monetary loss from a single occurrence of a risk. ALE (Annual Loss Expectancy) = SLE × ARO, and is used to justify security spending. These quantitative risk formulas are tested on Security+."
+  },
+
+  // ── Additional questions to round out the bank ──
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "Which type of attack occurs when an attacker manipulates an application into executing unintended commands by injecting code that runs in a user's browser?",
+    opts: ["SQL Injection","Cross-Site Scripting (XSS)","Command Injection","XML Injection"],
+    answer: 1,
+    explanation: "XSS injects malicious scripts into web pages viewed by other users. Reflected XSS bounces off the server; stored XSS persists in the database; DOM-based XSS modifies the DOM. Defenses include input validation, output encoding, and Content Security Policy (CSP) headers."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which of the following BEST describes the purpose of Network Access Control (NAC)?",
+    opts: ["Assigns IP addresses to devices on the network","Ensures only compliant and authorized devices can connect to the network","Encrypts all traffic between endpoints","Filters web content for policy violations"],
+    answer: 1,
+    explanation: "NAC enforces security policy by checking devices for compliance (patched OS, antivirus installed, etc.) before granting network access. Non-compliant devices may be quarantined or granted limited access. IEEE 802.1X is the standard protocol used for NAC at the port level."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "Which type of backup only copies files that have changed since the last full backup, regardless of whether they've been backed up incrementally?",
+    opts: ["Full backup","Incremental backup","Differential backup","Snapshot backup"],
+    answer: 2,
+    explanation: "Differential backups copy all changes since the last full backup, growing larger over time but requiring only two restore operations (full + latest differential). Incremental backups copy changes since the last backup of any type, using less space but requiring more restores. Full backups copy everything."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which of the following is used to verify the integrity of a downloaded file?",
+    opts: ["Digital signature","Checksum/hash","SSL certificate","Symmetric key"],
+    answer: 1,
+    explanation: "A cryptographic hash (e.g., SHA-256) generates a fixed-length fingerprint of a file. If even one bit changes, the hash is completely different. Comparing the published hash against a computed hash verifies the file hasn't been corrupted or tampered with."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "An attacker uses stolen username/password pairs from previous breaches to attempt login to multiple services. This is BEST described as:",
+    opts: ["Brute force attack","Dictionary attack","Credential stuffing","Password spraying"],
+    answer: 2,
+    explanation: "Credential stuffing uses leaked username/password combinations from previous breaches to attempt access on other services, exploiting password reuse. Defenses include MFA, breach monitoring (Have I Been Pwned), and forcing password resets when credentials appear in breach databases."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "A company implements multi-factor authentication for remote VPN access. Which security goal does MFA PRIMARILY address?",
+    opts: ["Availability","Confidentiality","Authentication strength","Non-repudiation"],
+    answer: 2,
+    explanation: "MFA significantly strengthens authentication by requiring two or more factors (something you know, have, or are). Even if a password is compromised, the attacker cannot authenticate without the second factor. This directly addresses the risk of credential theft and account takeover."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which of the following BEST describes microsegmentation?",
+    opts: ["Dividing a network into large zones using firewalls","Applying fine-grained security policies to individual workloads or applications within a network","Creating separate physical networks for different departments","Using VLANs to separate wireless and wired traffic"],
+    answer: 1,
+    explanation: "Microsegmentation uses software-defined networking to apply granular security policies at the workload level, limiting lateral movement even within the same VLAN. It is a key component of Zero Trust architecture, ensuring that east-west traffic between workloads is also controlled."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "Which of the following BEST describes the purpose of an audit trail?",
+    opts: ["Prevents unauthorized access to systems","Provides a chronological record of system activities for accountability and forensics","Encrypts sensitive data to prevent disclosure","Backs up critical business data"],
+    answer: 1,
+    explanation: "An audit trail (audit log) records system events chronologically—who did what, when, and from where. It supports accountability, forensic investigation, compliance reporting, and anomaly detection. Logs should be protected from tampering, ideally using a centralized, write-once logging system."
+  },
+  {
+    domain: "2 – Threats, Vulnerabilities & Mitigations",
+    q: "Which type of malware encrypts a victim's files and demands payment for the decryption key?",
+    opts: ["Spyware","Adware","Ransomware","Rootkit"],
+    answer: 2,
+    explanation: "Ransomware encrypts victim data and demands a ransom (typically cryptocurrency) for the decryption key. Mitigations include offline backups tested for recoverability, email filtering, endpoint protection, network segmentation, and patching. Paying the ransom is discouraged as it doesn't guarantee recovery."
+  },
+  {
+    domain: "1 – General Security Concepts",
+    q: "Which of the following BEST describes role-based access control (RBAC)?",
+    opts: ["Access is determined by rules defined by the system administrator","Access is granted based on the user's job function or role within the organization","Access is determined by sensitivity labels on objects","Users can grant access to others at their discretion"],
+    answer: 1,
+    explanation: "RBAC assigns permissions to roles (e.g., admin, analyst, manager) rather than individuals. Users are assigned roles. This simplifies access management—changing a user's role updates all their permissions at once. It implements least privilege at scale and is the most common enterprise access model."
+  },
+  {
+    domain: "4 – Security Operations",
+    q: "After restoring from a ransomware attack, which step should be taken BEFORE reconnecting restored systems to the network?",
+    opts: ["Apply all pending patches and verify the malware has been eradicated","Notify the media about the incident","Hire a new security team","Increase storage capacity"],
+    answer: 0,
+    explanation: "Before reconnecting recovered systems, ensure the root cause of the infection is eradicated (malware removed, vulnerabilities patched, compromised credentials changed). Reconnecting an infected or unpatched system can reinfect the environment immediately. This is the Eradication phase of incident response."
+  },
+  {
+    domain: "3 – Security Architecture",
+    q: "Which DNS security extension helps prevent DNS cache poisoning by digitally signing DNS records?",
+    opts: ["DNSSEC","DoH (DNS over HTTPS)","DoT (DNS over TLS)","DMARC"],
+    answer: 0,
+    explanation: "DNSSEC (DNS Security Extensions) adds cryptographic signatures to DNS records, allowing resolvers to verify that responses are authentic and unmodified. DoH and DoT encrypt DNS queries in transit but don't authenticate responses. Cache poisoning redirects users to malicious sites."
+  },
+  {
+    domain: "5 – Security Program Management & Oversight",
+    q: "What is the PRIMARY goal of a Business Continuity Plan (BCP)?",
+    opts: ["Recover IT systems after a disaster","Ensure critical business functions continue during and after a disruptive event","Document security incidents for compliance","Test the organization's incident response capability"],
+    answer: 1,
+    explanation: "A BCP focuses on maintaining critical business operations during disruptions—not just IT recovery. DRP (Disaster Recovery Plan) is a subset focused on IT systems. BCP includes identifying critical functions, alternative procedures, communication plans, and testing through tabletop exercises and simulations."
+  }
+];
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let state = {
+  questions: [],
+  current: 0,
+  answers: [],
+  startTime: null,
+  timerInterval: null,
+  timerSeconds: 0,
+  timerLimit: 0
+};
+
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const s = (seconds % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function getDomainColor(pct) {
+  if (pct >= 80) return 'var(--success)';
+  if (pct >= 60) return 'var(--warning)';
+  return 'var(--danger)';
+}
+
+// ─────────────────────────────────────────────
+//  EXAM FLOW
+// ─────────────────────────────────────────────
+function startExam() {
+  const count = parseInt(document.getElementById('q-count').value);
+  const timerMin = parseInt(document.getElementById('q-timer').value);
+
+  // Sample questions proportionally from domains
+  const domains = [...new Set(BANK.map(q => q.domain))];
+  let pool = [];
+  domains.forEach(d => {
+    const dq = shuffle(BANK.filter(q => q.domain === d));
+    const take = Math.max(1, Math.round((dq.length / BANK.length) * count));
+    pool.push(...dq.slice(0, take));
+  });
+  pool = shuffle(pool).slice(0, count);
+
+  state.questions = pool;
+  state.answers = new Array(pool.length).fill(null);
+  state.current = 0;
+  state.startTime = Date.now();
+  state.timerLimit = timerMin * 60;
+  state.timerSeconds = 0;
+
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('results-screen').style.display = 'none';
+
+  if (timerMin > 0) {
+    const display = document.getElementById('q-timer-display');
+    display.style.display = 'block';
+    state.timerInterval = setInterval(() => {
+      state.timerSeconds++;
+      const remaining = state.timerLimit - state.timerSeconds;
+      display.textContent = '⏱ ' + formatTime(Math.max(0, remaining));
+      display.className = 'quiz-timer' + (remaining < 300 ? (remaining < 60 ? ' danger' : ' warning') : '');
+      if (remaining <= 0) { clearInterval(state.timerInterval); finishExam(); }
+    }, 1000);
+    display.textContent = '⏱ ' + formatTime(state.timerLimit);
+  }
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const { questions, current, answers } = state;
+  const q = questions[current];
+  const answered = answers[current] !== null;
+
+  // Meta
+  document.getElementById('q-progress').textContent =
+    `Question ${current + 1} of ${questions.length}`;
+  document.getElementById('progress-fill').style.width =
+    `${((current + 1) / questions.length) * 100}%`;
+
+  // Nav buttons
+  document.getElementById('prev-btn').disabled = current === 0;
+  const nextBtn = document.getElementById('next-btn');
+  if (current === questions.length - 1) {
+    nextBtn.textContent = 'Finish Exam';
+    nextBtn.onclick = () => { if (confirmFinish()) finishExam(); };
+  } else {
+    nextBtn.textContent = 'Next →';
+    nextBtn.onclick = () => navigate(1);
+  }
+
+  const area = document.getElementById('question-area');
+  const letters = ['A', 'B', 'C', 'D'];
+
+  area.innerHTML = `
+    <div class="domain-badge">${q.domain}</div>
+    <div class="question-card">
+      <div class="question-num">Question ${current + 1}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options" id="options-list">
+        ${q.opts.map((opt, i) => {
+          let cls = '';
+          if (answered) {
+            cls = 'disabled';
+            if (i === q.answer) cls += ' correct';
+            else if (i === answers[current]) cls += ' wrong';
+          } else if (i === answers[current]) {
+            cls = 'selected';
+          }
+          return `<button class="option ${cls}" onclick="${answered ? '' : `selectAnswer(${i})`}">
+            <div class="option-letter">${letters[i]}</div>
+            <div class="option-text">${opt}</div>
+          </button>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function selectAnswer(idx) {
+  if (state.answers[state.current] !== null) return;
+  state.answers[state.current] = idx;
+  renderQuestion();
+}
+
+function navigate(dir) {
+  const next = state.current + dir;
+  if (next < 0 || next >= state.questions.length) return;
+  state.current = next;
+  renderQuestion();
+}
+
+function confirmFinish() {
+  const unanswered = state.answers.filter(a => a === null).length;
+  if (unanswered > 0) {
+    return confirm(`You have ${unanswered} unanswered question(s). Finish anyway?`);
+  }
+  return true;
+}
+
+// ─────────────────────────────────────────────
+//  RESULTS
+// ─────────────────────────────────────────────
+function finishExam() {
+  clearInterval(state.timerInterval);
+  const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('results-screen').style.display = 'block';
+
+  const { questions, answers } = state;
+  let correct = 0;
+  questions.forEach((q, i) => { if (answers[i] === q.answer) correct++; });
+  const pct = Math.round((correct / questions.length) * 100);
+  const pass = pct >= 83;
+
+  // Score ring
+  const ring = document.getElementById('score-ring');
+  ring.className = 'score-ring ' + (pass ? 'pass' : 'fail');
+  ring.innerHTML = `${pct}%<span>${pass ? 'PASS' : 'FAIL'}</span>`;
+
+  document.getElementById('pass-fail-msg').textContent =
+    pass ? 'You passed! Great job.' : 'Keep studying — you\'ve got this!';
+  document.getElementById('s-correct').textContent = correct;
+  document.getElementById('s-wrong').textContent = questions.length - correct;
+  document.getElementById('s-time').textContent = formatTime(elapsed);
+
+  // Domain breakdown
+  const domains = [...new Set(questions.map(q => q.domain))].sort();
+  const domainBars = document.getElementById('domain-bars');
+  domainBars.innerHTML = domains.map(d => {
+    const dqs = questions.map((q, i) => ({ q, i })).filter(({ q }) => q.domain === d);
+    const dCorrect = dqs.filter(({ q, i }) => answers[i] === q.answer).length;
+    const dpct = dqs.length ? Math.round((dCorrect / dqs.length) * 100) : 0;
+    const color = getDomainColor(dpct);
+    return `<div class="domain-row">
+      <div class="d-name">${d}</div>
+      <div class="d-bar-wrap"><div class="d-bar" style="width:${dpct}%;background:${color}"></div></div>
+      <div class="d-pct" style="color:${color}">${dpct}%</div>
+    </div>`;
+  }).join('');
+
+  // Review list
+  const reviewList = document.getElementById('review-list');
+  reviewList.innerHTML = questions.map((q, i) => {
+    const userAns = answers[i];
+    const isCorrect = userAns === q.answer;
+    const letters = ['A', 'B', 'C', 'D'];
+    return `<div class="review-card" id="rc-${i}">
+      <div class="review-card-header" onclick="toggleReview(${i})">
+        <div class="status-dot ${isCorrect ? 'correct' : 'wrong'}"></div>
+        <div class="review-q-text"><strong>Q${i + 1}.</strong> ${q.q}</div>
+        <div class="review-chevron">&#9660;</div>
+      </div>
+      <div class="review-body">
+        <div class="review-options">
+          ${q.opts.map((opt, oi) => {
+            let cls = '';
+            if (oi === q.answer) cls = 'correct';
+            else if (oi === userAns) cls = 'wrong';
+            return `<div class="review-option ${cls}">${letters[oi]}. ${opt}${oi === q.answer ? ' ✓' : (oi === userAns && userAns !== null ? ' ✗' : '')}</div>`;
+          }).join('')}
+          ${userAns === null ? `<div class="review-option" style="color:var(--muted)">Not answered — Correct answer: ${letters[q.answer]}</div>` : ''}
+        </div>
+        <div class="explanation-box">
+          <strong>Explanation</strong>
+          ${q.explanation}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleReview(i) {
+  const card = document.getElementById(`rc-${i}`);
+  card.classList.toggle('open');
+}
+
+function retakeExam() {
+  // Same questions, re-shuffled order
+  state.questions = shuffle(state.questions);
+  state.answers = new Array(state.questions.length).fill(null);
+  state.current = 0;
+  state.startTime = Date.now();
+  state.timerSeconds = 0;
+
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+
+  const timerMin = parseInt(document.getElementById('q-timer')?.value || 0);
+  if (timerMin > 0) {
+    clearInterval(state.timerInterval);
+    state.timerLimit = timerMin * 60;
+    const display = document.getElementById('q-timer-display');
+    display.style.display = 'block';
+    display.textContent = '⏱ ' + formatTime(state.timerLimit);
+    state.timerInterval = setInterval(() => {
+      state.timerSeconds++;
+      const remaining = state.timerLimit - state.timerSeconds;
+      display.textContent = '⏱ ' + formatTime(Math.max(0, remaining));
+      display.className = 'quiz-timer' + (remaining < 300 ? (remaining < 60 ? ' danger' : ' warning') : '');
+      if (remaining <= 0) { clearInterval(state.timerInterval); finishExam(); }
+    }, 1000);
+  }
+
+  renderQuestion();
+}
+
+function newExam() {
+  clearInterval(state.timerInterval);
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+  const td = document.getElementById('q-timer-display');
+  if (td) td.style.display = 'none';
+}
+</script>
+</body>
+</html>
