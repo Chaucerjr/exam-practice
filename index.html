@@ -287,12 +287,38 @@
       background: rgba(79,142,247,0.07);
       border: 1px solid rgba(79,142,247,0.25);
       border-radius: 8px;
+      padding: 16px 18px;
+      font-size: 0.93rem;
+      line-height: 1.75;
+      color: var(--text);
+    }
+    .explanation-box strong { color: var(--accent); display: block; margin-bottom: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .practice-explanation {
+      margin-top: 16px;
+      border-radius: 8px;
       padding: 14px 16px;
       font-size: 0.88rem;
       line-height: 1.65;
-      color: #c9d5ed;
+      border: 1px solid;
     }
-    .explanation-box strong { color: var(--accent); display: block; margin-bottom: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .practice-explanation.correct-explanation {
+      background: rgba(52,211,153,0.07);
+      border-color: rgba(52,211,153,0.3);
+    }
+    .practice-explanation.wrong-explanation {
+      background: rgba(248,113,113,0.07);
+      border-color: rgba(248,113,113,0.3);
+    }
+    .practice-explanation strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .practice-explanation.correct-explanation strong { color: var(--success); }
+    .practice-explanation.wrong-explanation strong { color: var(--danger); }
 
     .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
 
@@ -349,6 +375,13 @@
 
     <div class="config-row">
       <div>
+        <label for="q-mode">Mode: </label>
+        <select id="q-mode" onchange="onModeChange()">
+          <option value="timed">Timed Exam</option>
+          <option value="practice">Practice Mode</option>
+        </select>
+      </div>
+      <div>
         <label for="q-count">Questions: </label>
         <select id="q-count">
           <option value="10">10 — Quick drill</option>
@@ -357,7 +390,7 @@
           <option value="90">90 — Full exam</option>
         </select>
       </div>
-      <div>
+      <div id="timer-config">
         <label for="q-timer">Timer: </label>
         <select id="q-timer">
           <option value="0">No timer</option>
@@ -981,7 +1014,8 @@ let state = {
   startTime: null,
   timerInterval: null,
   timerSeconds: 0,
-  timerLimit: 0
+  timerLimit: 0,
+  mode: 'timed'  // 'timed' or 'practice'
 };
 
 // ─────────────────────────────────────────────
@@ -1011,9 +1045,15 @@ function getDomainColor(pct) {
 // ─────────────────────────────────────────────
 //  EXAM FLOW
 // ─────────────────────────────────────────────
+function onModeChange() {
+  const mode = document.getElementById('q-mode').value;
+  document.getElementById('timer-config').style.display = mode === 'timed' ? '' : 'none';
+}
+
 function startExam() {
   const count = parseInt(document.getElementById('q-count').value);
   const timerMin = parseInt(document.getElementById('q-timer').value);
+  state.mode = document.getElementById('q-mode').value;
 
   // Sample questions proportionally from domains
   const domains = [...new Set(BANK.map(q => q.domain))];
@@ -1036,7 +1076,7 @@ function startExam() {
   document.getElementById('quiz-screen').style.display = 'block';
   document.getElementById('results-screen').style.display = 'none';
 
-  if (timerMin > 0) {
+  if (state.mode === 'timed' && timerMin > 0) {
     const display = document.getElementById('q-timer-display');
     display.style.display = 'block';
     state.timerInterval = setInterval(() => {
@@ -1077,6 +1117,9 @@ function renderQuestion() {
   const area = document.getElementById('question-area');
   const letters = ['A', 'B', 'C', 'D'];
 
+  const showExplanation = state.mode === 'practice' && answered;
+  const isCorrect = answered && answers[current] === q.answer;
+
   area.innerHTML = `
     <div class="domain-badge">${q.domain}</div>
     <div class="question-card">
@@ -1098,6 +1141,11 @@ function renderQuestion() {
           </button>`;
         }).join('')}
       </div>
+      ${showExplanation ? `
+      <div class="practice-explanation ${isCorrect ? 'correct-explanation' : 'wrong-explanation'}">
+        <strong>${isCorrect ? 'Correct!' : 'Incorrect — Here\'s why:'}</strong>
+        ${q.explanation}
+      </div>` : ''}
     </div>`;
 }
 
@@ -1214,7 +1262,7 @@ function retakeExam() {
   document.getElementById('quiz-screen').style.display = 'block';
 
   const timerMin = parseInt(document.getElementById('q-timer')?.value || 0);
-  if (timerMin > 0) {
+  if (state.mode === 'timed' && timerMin > 0) {
     clearInterval(state.timerInterval);
     state.timerLimit = timerMin * 60;
     const display = document.getElementById('q-timer-display');
